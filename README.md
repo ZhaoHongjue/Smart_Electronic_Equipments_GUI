@@ -21,3 +21,7 @@
    2. 清空显示
    3. 保存数据
 3. **参数设置模块**
+
+## 参考
+1. [Tkinter参考资料](https://zhuanlan.zhihu.com/p/75872830?from_voters_page=true&ivk_sa=1024320u)
+2. [Tkinter和matplotlib集合](https://blog.csdn.net/qq_27825451/article/details/102457050)
