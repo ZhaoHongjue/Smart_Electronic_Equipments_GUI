@@ -8,7 +8,7 @@ class Chart:
     def __init__(self):
         self.fig, self.ax = plt.subplots(1, 1)
     
-    def plot(self, data, pattern):
+    def plot(self, data, pattern, name = None):
         self.ax.clear()
         self.ax.plot(data)
         
@@ -21,7 +21,9 @@ class Chart:
         elif pattern == 3:
             self.ax.set_ylabel('Luminousintensity')
         self.fig.canvas.draw()
-        plt.savefig('curve.png',bbox_inches='tight')
+        if name is None:
+            name = time.strftime("%Y%m%d%H%M%S", time.localtime())
+        plt.savefig('./fig/' + name + '.png',bbox_inches='tight')
 
 # 存储数据
 class Data:
@@ -36,6 +38,9 @@ class Data:
         self.df.loc[self.i] = args
         self.i = self.i + 1
 
+    def get(self, num):
+        return self.df[['time', str(num) + '_T', str(num) + '_H', str(num) + '_L']]
+
     def clear(self, save = True):
         if save:
             self.save()
@@ -48,7 +53,7 @@ class Data:
     def save(self, name = None):
         if name is None:
             name = time.strftime("%Y%m%d%H%M%S", time.localtime())
-        self.df.to_csv(name + '.csv')
+        self.df.to_csv('./data/' + name + '.csv')
 
     def load(self, name = 'test'):
-        self.df = pd.read_csv(name + '.csv', index_col = 0)
+        self.df = pd.read_csv('/data/' + name + '.csv', index_col = 0)
