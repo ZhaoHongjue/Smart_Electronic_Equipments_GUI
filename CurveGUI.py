@@ -12,7 +12,7 @@ from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 
 from utils import *
 
-class GUI:
+class CurveGUI:
     def __init__(self):
         # 窗口设置
         self.Width = 1200           # 窗口宽度
@@ -24,7 +24,7 @@ class GUI:
 
         self.data = Data()
         
-        self.createLabels()
+        # self.createLabels()
         self.creatWidgets()
         
         self.root.mainloop()
