@@ -1,10 +1,11 @@
 import numpy as np
 import tkinter as tk
 import threading
+import multiprocessing
+from multiprocessing import Queue
 from tkinter import scrolledtext, messagebox
 from tkinter.constants import END, INSERT, DISABLED, NORMAL
 import matplotlib
-matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk 
@@ -15,18 +16,19 @@ def do_job():
     print('I am here')
 
 db = Data()
+q = Queue()
 
 def get_data():
     data = np.ones(12) * 22
     data = data + np.random.randint(low = 0, high = 10, size = (12,)) * 3
     db.store(data)
+    q.put(db)
     timer0 = threading.Timer(2, get_data)
     timer0.start()
 
 def update_data():
     global data
     data = db.get_new()
-    # print('data =', data)
     timer1 = threading.Timer(2, update_data)
     timer1.start()
 
@@ -136,11 +138,11 @@ class Curve:
         
         
         self.ax.clear()
-        # for i in range(d.shape[1]):
-        #     print(legends[i])
-        #     self.ax.plot(d[:, i], label = legends[i])
+        for i in range(d.shape[1]):
+            # print(legends[i])
+            self.ax.plot(d[:, i])
         # print(legends)
-        self.ax.plot(d)
+        # self.ax.plot(d[:, 1])
         # print(lines)
         # plt.legend(lines, legends)
         self.canvas.draw()
@@ -187,7 +189,8 @@ class Curve:
         self.chose_param[2] = True
         self.chose_node = [False, False, False, False]
 
-def CreateCurve():
+def CreateCurve(q):
+    db = q.get()
     curve = Curve()
     curve.root.mainloop()
 
@@ -270,9 +273,9 @@ class MainGUI:
         thread_refresh.join()
     
     def Curve(self):
-        thread_curve = threading.Thread(target=CreateCurve, name = 'Curve')
-        thread_curve.daemon = True
-        thread_curve.start()
+        process_curve = multiprocessing.Process(target=CreateCurve, name = 'Curve', args=(q,))
+        process_curve.daemon = True
+        process_curve.start()
 
     def SaveData(self):
         thread_savedata = threading.Thread(target=_SaveData, name = 'SaveData')
